@@ -127,16 +127,17 @@ resource "aws_iam_role_policy" "lambda_policy" {
 # ─── LAMBDA LAYER FOR OPENAI ────────────────────────────────
 resource "aws_lambda_layer_version" "openai_layer" {
   layer_name          = "${var.project_name}-openai"
-  description         = "OpenAI Python SDK"
+  description         = "OpenAI Python SDK and pypdf"
   compatible_runtimes = ["python3.11"]
   filename            = "${path.module}/../lambda/openai_layer.zip"
+  source_code_hash    = filebase64sha256("${path.module}/../lambda/openai_layer.zip")
 }
 
 # ─── DOCUMENT PROCESSOR LAMBDA ──────────────────────────────
 data "archive_file" "processor_zip" {
   type        = "zip"
-  source_file = "${path.module}/../lambda/document_processor.py"
   output_path = "${path.module}/../lambda/document_processor.zip"
+  source_dir  = "${path.module}/../lambda/processor_package"
 }
 
 resource "aws_lambda_function" "processor" {
