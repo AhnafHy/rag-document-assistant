@@ -195,6 +195,7 @@ resource "aws_lambda_function" "doc_api" {
     variables = {
       DYNAMODB_TABLE   = aws_dynamodb_table.rag.name
       DOCUMENTS_BUCKET = aws_s3_bucket.documents.id
+      CHAT_FUNCTION    = aws_lambda_function.chat_api.function_name
     }
   }
   tags = { Name = "${var.project_name}-doc-api" }

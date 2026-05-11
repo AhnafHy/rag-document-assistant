@@ -68,18 +68,31 @@ def delete_document(table, doc_id):
 def lambda_handler(event, context):
     if event.get('httpMethod') == 'OPTIONS':
         return response(200, {})
-    
-    table = dynamodb.Table(TABLE_NAME)
+
     path = event.get('path', '/')
     method = event.get('httpMethod', 'GET')
+
+    # Forward chat requests to chat Lambda
+    if path.startswith('/chat'):
+        lambda_client = boto3.client('lambda')
+        chat_function = os.environ.get('CHAT_FUNCTION', '')
+        result = lambda_client.invoke(
+            FunctionName=chat_function,
+            InvocationType='RequestResponse',
+            Payload=json.dumps(event).encode()
+        )
+        payload = json.loads(result['Payload'].read())
+        return payload
+
     params = event.get('queryStringParameters') or {}
-    
+
     if method == 'GET' and path == '/health':
         return response(200, {'status': 'ok'})
-    
+
     elif method == 'GET' and path == '/documents':
+        table = dynamodb.Table(TABLE_NAME)
         return response(200, get_documents(table))
-    
+
     elif method == 'POST' and path == '/documents/upload-url':
         body = json.loads(event.get('body', '{}'))
         filename = body.get('filename', '')
@@ -87,10 +100,11 @@ def lambda_handler(event, context):
             return response(400, {'error': 'filename is required'})
         url, key = get_upload_url(filename)
         return response(200, {'upload_url': url, 'key': key})
-    
+
     elif method == 'DELETE' and '/documents/' in path:
+        table = dynamodb.Table(TABLE_NAME)
         doc_id = path.split('/documents/')[-1]
         delete_document(table, doc_id)
         return response(200, {'message': 'Document deleted'})
-    
+
     return response(404, {'error': 'Endpoint not found'})
