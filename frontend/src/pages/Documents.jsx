@@ -77,7 +77,7 @@ export default function Documents() {
                 </span>
               </div>
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate(`/?doc=${encodeURIComponent(doc.filename)}`)}
                 className="w-full text-xs font-medium text-violet-600 bg-violet-50 hover:bg-violet-100 py-2 rounded-lg transition-colors"
               >
                 Chat with this document →

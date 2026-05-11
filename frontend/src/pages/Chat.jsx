@@ -15,6 +15,7 @@ export default function Chat() {
   const [selectedDoc, setSelectedDoc] = useState(null)
   const [sessionId] = useState(() => Math.random().toString(36).substring(2, 10))
   const bottomRef = useRef(null)
+  const [messageHistory, setMessageHistory] = useState({})
 
   const { data: documents } = useQuery({
     queryKey: ['documents'],
@@ -106,12 +107,18 @@ export default function Chat() {
             <div
               key={doc.doc_id}
               onClick={() => {
-                setSelectedDoc(doc)
-                setMessages([{
-                  role: 'assistant',
-                  content: `Hi! I've loaded **${doc.filename}**. Ask me anything about this document.`
-                }])
-              }}
+                if (selectedDoc?.doc_id !== doc.doc_id) {
+                  setMessageHistory(prev => ({
+                    ...prev,
+                    [selectedDoc?.doc_id]: messages
+                  }))
+                  setSelectedDoc(doc)
+                  setMessages(messageHistory[doc.doc_id] || [{
+                   role: 'assistant',
+                   content: `Hi! I've loaded **${doc.filename}**. Ask me anything about this document.`
+                 }])
+               }
+             }}
               className={`p-3 rounded-xl border cursor-pointer transition-all ${
                 selectedDoc?.doc_id === doc.doc_id
                   ? 'border-violet-400 bg-violet-50'
