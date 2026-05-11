@@ -136,8 +136,8 @@ resource "aws_lambda_layer_version" "openai_layer" {
 # ─── DOCUMENT PROCESSOR LAMBDA ──────────────────────────────
 data "archive_file" "processor_zip" {
   type        = "zip"
+  source_file = "${path.module}/../lambda/document_processor.py"
   output_path = "${path.module}/../lambda/document_processor.zip"
-  source_dir  = "${path.module}/../lambda/processor_package"
 }
 
 resource "aws_lambda_function" "processor" {
