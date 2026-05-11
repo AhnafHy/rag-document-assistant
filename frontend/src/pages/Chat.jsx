@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { Send, Bot, FileText } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import MessageBubble from '../components/MessageBubble'
 
 const API = import.meta.env.VITE_API_URL
@@ -24,6 +24,24 @@ export default function Chat() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    if (documents && documents.length > 0) {
+      const docParam = searchParams.get('doc')
+      if (docParam) {
+        const match = documents.find(d => d.filename === docParam)
+        if (match && !selectedDoc) {
+          setSelectedDoc(match)
+          setMessages([{
+            role: 'assistant',
+            content: `Hi! I've loaded **${match.filename}**. Ask me anything about this document.`
+          }])
+        }
+      }
+    }
+  }, [documents, searchParams])
 
   const sendMessage = async () => {
     if (!input.trim() || !selectedDoc || loading) return
