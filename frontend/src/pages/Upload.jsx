@@ -35,7 +35,7 @@ export default function UploadPage() {
       // Wait for processing
       setTimeout(() => {
         setStatus('success')
-      }, 3000)
+      }, 30000)
 
     } catch (err) {
       setStatus('error')
@@ -103,7 +103,7 @@ export default function UploadPage() {
             <div>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-600 mx-auto mb-3"></div>
               <p className="text-sm text-gray-500">Processing document — chunking and generating embeddings...</p>
-              <p className="text-xs text-gray-400 mt-1">This takes about 15–30 seconds</p>
+              <p className="text-xs text-gray-400 mt-1">This takes about 30 seconds</p>
             </div>
           )}
 
@@ -114,7 +114,7 @@ export default function UploadPage() {
               <p className="text-gray-400 text-sm mb-6">Your document has been indexed and is ready for Q&A</p>
               <div className="flex gap-3 justify-center">
                 <button
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/?doc=' + encodeURIComponent(filename))}
                   className="bg-violet-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors"
                 >
                   Start chatting →
