@@ -18,22 +18,23 @@ CHUNK_OVERLAP = 50
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 def extract_text_from_pdf(bucket, key):
+    import io
     response = s3.get_object(Bucket=bucket, Key=key)
     content = response['Body'].read()
     
-    # Extract text from PDF using basic parsing
-    text = ''
     try:
-        # Try to decode as text first
-        text = content.decode('utf-8', errors='ignore')
-        # Clean up PDF binary artifacts
-        text = re.sub(r'[^\x20-\x7E\n\r\t]', ' ', text)
-        text = re.sub(r'\s+', ' ', text).strip()
+        import pypdf
+        pdf_reader = pypdf.PdfReader(io.BytesIO(content))
+        text = ''
+        for page in pdf_reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + '\n'
+        print(f"Extracted {len(text)} characters from {len(pdf_reader.pages)} pages")
+        return text
     except Exception as e:
-        print(f"Text extraction error: {e}")
-        text = f"Document content from {key}"
-    
-    return text
+        print(f"pypdf extraction failed: {e}")
+        return ''
 
 def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
     words = text.split()
