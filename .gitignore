@@ -6,8 +6,10 @@ dist/
 .terraform/
 *.tfvars
 *.log
-*.zip
 frontend/dist/
 .env.local
 frontend/node_modules/
 lambda_layer_build/
+lambda/document_processor.zip
+lambda/document_api.zip
+lambda/chat_api.zip
