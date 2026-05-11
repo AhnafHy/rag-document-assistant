@@ -223,7 +223,7 @@ Returns full conversation history for a session.
 
 **1. Create Terraform state bucket**
 ```bash
-aws s3 mb s3://rag-tfstate-YOUR_NAME --region us-east-1
+aws s3 mb s3://rag-tfstate-ahnaf --region us-east-1
 ```
 
 **2. Update bucket name in terraform/main.tf**
