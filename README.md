@@ -11,7 +11,7 @@ A Retrieval-Augmented Generation (RAG) document Q&A application. Upload any PDF 
 **[Open RAG Document Assistant →](http://rag-document-assistant-frontend-8eed2efc.s3-website-us-east-1.amazonaws.com/)**
 
 Upload a PDF → wait 30 seconds for processing → ask anything about the document.
-
+> **Note:** Currently supports text-based PDFs (resumes, reports, articles, documentation). Image-based or scanned PDFs require AWS Textract OCR integration, the migration path would replace the pypdf extraction step in `document_processor.py` with a Textract API call that handles both text and image-based documents.
 ---
 
 ## What It Does
